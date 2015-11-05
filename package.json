@@ -1,0 +1,16 @@
+{
+  "name": "ad-form-builder",
+  "version": "1.0.0",
+  "description": "AngularJS form builder",
+  "main": "index.js",
+  "scripts": {
+    "test": "gult test"
+  },
+  "keywords": [
+    "angularjs",
+    "form",
+    "builder"
+  ],
+  "author": "Degtarov Alexander",
+  "license": "MIT"
+}
