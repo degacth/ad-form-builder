@@ -1,3 +1,2 @@
-require "angular"
-
-app = angular.module "FormBuilder", []
+require "./form-builder.app.coffee"
+require "./form-builder.directive.coffee"
