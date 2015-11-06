@@ -5,6 +5,8 @@ var gulp = require("gulp")
 
 gulp.task("compile", function(){
     gulp.src(base_dir + "/app/app.coffee")
+        .pipe($.coffeelint())
+        .pipe($.coffeelint.reporter())
         .pipe($.coffeeify())
         .pipe($.uglify())
         .pipe(gulp.dest(base_dir + "/build/"))
