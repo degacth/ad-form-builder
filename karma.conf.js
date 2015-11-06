@@ -5,7 +5,8 @@ module.exports = function(config) {
         files: [
             './node_modules/angular/angular.js',
             './node_modules/angular-mocks/angular-mocks.js',
-            'app/**/*.spec.coffee'
+            './app/**/*.coffee',
+            './spec/**/*.spec.coffee',
         ],
 
         // list of files to exclude
@@ -69,6 +70,6 @@ module.exports = function(config) {
         },
 
         // Add browserify to preprocessors
-        preprocessors: {'app/**/*.spec.coffee': ['browserify']}
+        preprocessors: {'./**/*.coffee': ['browserify']}
     });
 };
