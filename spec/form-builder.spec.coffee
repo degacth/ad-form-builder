@@ -30,3 +30,13 @@ describe "Элемент базовой формы", ->
     it "Должна задавать функцию сохранения по умолчанию", ->
       el = compiler()
       expect(typeof el.find("form").scope().submit).toBe("function")
+
+    it "Должна создавать два инпута", ->
+      scope.entity =
+        hello: "hello"
+        world: 1
+
+      el = compiler()
+      expect(el.find("input").length).toBe(2)
+      expect(el.find("input[type=text]").length).toBe(1)
+      expect(el.find("input[type=number]").length).toBe(1)
