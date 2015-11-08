@@ -6,3 +6,11 @@ app.factory "Form", -> class
     @fields = []
 
   addField: (name, opts) -> @fields.push _.extend name: name, opts
+
+app.provider "FormConfig", ->
+  config = {}
+
+  set: (k, v) ->
+    config[k] = v
+  $get: ->
+    get: (k) -> config[k]

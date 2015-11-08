@@ -11,6 +11,8 @@ elementTypes =
   choice: "<select name=\"{{element.name}}\" ng-options=\"v for v in element.choices\">"
   boolean: "<input type=\"checkbox\">"
 
+setAttrsToElement = (el, attrs = {}) -> el.attr attrs
+
 setElementAttrsByType = (el, type) ->
   switch type
     when "string"
@@ -27,7 +29,7 @@ setElementAttrsByType = (el, type) ->
         "ng-options": "v for v in model.array"
         "multiple": true
 
-app.directive "formBuilder", [ ->
+app.directive "formBuilder", ["FormConfig", (FormConfig) ->
   restrict: "E"
   scope:
     submit: "="
@@ -45,9 +47,10 @@ app.directive "formBuilder", [ ->
     scope.model = form.model
     scope.elements = form.fields
     scope.formName = form.name
+    setAttrsToElement(el.find("form"), FormConfig.get "formAttrs")
 ]
 
-app.directive "formElement", ["$compile", ($compile) ->
+app.directive "formElement", ["$compile", "FormConfig", ($compile, FormConfig) ->
   restrict: "E"
   compile: (tElem, tAttr) -> (scope, el, attrs) ->
     element = scope.element
@@ -61,5 +64,7 @@ app.directive "formElement", ["$compile", ($compile) ->
     widget.attr
       "ng-model": "model.#{name}"
       id: id
+
+    setAttrsToElement widget, FormConfig.get "widgetAttrs"
     el.append $compile(widget) scope
 ]
