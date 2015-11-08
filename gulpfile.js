@@ -9,7 +9,7 @@ gulp.task("compile", function(){
         .pipe($.coffeelint.reporter())
         .pipe($.coffeeify())
         .pipe($.uglify())
-        .pipe(gulp.dest(base_dir + "/build/"))
+        .pipe(gulp.dest(base_dir))
 })
 
 gulp.task("test", function(){
