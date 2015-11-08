@@ -61,6 +61,8 @@ describe "Элемент базовой формы", ->
       expect(el.find("input[type=text]").length).toBe(1)
       expect(el.find("input[type=checkbox]").length).toBe(1)
       expect(el.find("input[ng-model]").length).toBe(3)
+      expect(el.find("button[type=submit]").length).toBe(1)
+      expect(el.find("button[type=submit]").text()).toBe("submit")
 
     it "Должна связывать модели", ->
       model = foo: "bar"

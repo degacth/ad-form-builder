@@ -4,7 +4,7 @@ app = require "./form-builder.app.coffee"
 getElementType = (value) -> Object::toString.call(value).replace(/^.*\s(\w+)\]$/, "$1").toLowerCase()
 getElement = (element) -> angular.element element
 setAttrsToElement = (el, attrs = {}) -> el.attr attrs
-setAttrsByType = (el, config, type) -> setAttrsToElement el, config["#{type}Attrs"]
+setAttrsByType = (el, config, type) -> setAttrsToElement el, if type then config["#{type}Attrs"] else config
 
 elementTypes =
   string: "<input type=\"text\">"
@@ -21,6 +21,7 @@ app.directive "formBuilder", ["FormConfig", (FormConfig) ->
   template: """
     <form novalidate ng-submit="submit()" name="{{ formName }}">
       <form-element ng-repeat="element in elements"></form-element>
+      <form-button ng-repeat="button in buttons"></form-button>
     </form>
   """
 
@@ -29,13 +30,14 @@ app.directive "formBuilder", ["FormConfig", (FormConfig) ->
     form = scope.form
     scope.model = form.model || {}
     scope.elements = form.fields
+    scope.buttons = form.buttons
     scope.formName = form.name
     setAttrsByType el.find("form"), FormConfig.get(), "form"
 ]
 
 app.directive "formElement", ["$compile", "FormConfig", ($compile, FormConfig) ->
   restrict: "E"
-  compile: (tElem, tAttr) -> (scope, el, attrs) ->
+  compile: (tElem, tAttr) -> (scope, el) ->
     element = scope.element
     label = element.label
     name = element.name
@@ -57,4 +59,14 @@ app.directive "formElement", ["$compile", "FormConfig", ($compile, FormConfig) -
 
     setAttrsByType widget, config, "widget"
     el.append $compile(widget) scope
+]
+
+app.directive "formButton", [ ->
+  restrict: "E"
+  template: "<button></button>"
+  compile: (tElem, tAttr) -> (scope, el) ->
+    button = scope.button
+    buttonElement = el.find "button"
+    setAttrsByType buttonElement, button.attrs
+    buttonElement.html button.label
 ]
