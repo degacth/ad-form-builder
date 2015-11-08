@@ -61,12 +61,12 @@ app.directive "formElement", ["$compile", "FormConfig", ($compile, FormConfig) -
     el.append $compile(widget) scope
 ]
 
-app.directive "formButton", [ ->
+app.directive "formButton", ["$compile", ($compile) ->
   restrict: "E"
-  template: "<button></button>"
   compile: (tElem, tAttr) -> (scope, el) ->
     button = scope.button
-    buttonElement = el.find "button"
+    buttonElement = getElement "<button>"
     setAttrsByType buttonElement, button.attrs
     buttonElement.html button.label
+    el.append $compile(buttonElement) scope
 ]
