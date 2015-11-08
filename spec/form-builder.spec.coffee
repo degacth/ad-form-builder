@@ -10,8 +10,10 @@ describe "Элемент базовой формы", ->
 
   beforeEach angular.mock.module "FormBuilder", ["FormConfigProvider", (FormConfigProvider) ->
     FormConfigProvider.set "formAttrs",
-      "class": "uk-form"
+      class: "uk-form"
       "data-hello": "world"
+    FormConfigProvider.set "labelAttrs",
+      class: "uk-label"
     return
   ]
 
@@ -34,6 +36,10 @@ describe "Элемент базовой формы", ->
       expect(el.find("form").scope().submit).toBe(noop)
 
     it "Должна реализовывать элементы на пустых параметрах", ->
+      form.addField "hello"
+      el = compiler()
+      expect(el.find("form").length).toBe(1)
+      expect(el.find("input[ng-model='model.hello']").length).toBe(1)
 
     it "Должна содержать элементы формы", ->
       form.addField "hello",
@@ -80,5 +86,8 @@ describe "Элемент базовой формы", ->
       expect(el.find("option").length).toBe(2)
 
     it "Должна производить настройку атрибутов формы", ->
+      form.addField "hello",
+        label: "hello"
       el = compiler()
       expect(el.find("form.uk-form[data-hello=world]").length).toBe(1)
+      expect(el.find("label.uk-label").length).toBe(1)

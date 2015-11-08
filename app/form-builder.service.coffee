@@ -13,4 +13,4 @@ app.provider "FormConfig", ->
   set: (k, v) ->
     config[k] = v
   $get: ->
-    get: (k) -> config[k]
+    get: (k) -> if k then config[k] else config

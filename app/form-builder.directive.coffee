@@ -2,32 +2,15 @@ _ = require "lodash"
 app = require "./form-builder.app.coffee"
 
 getElementType = (value) -> Object::toString.call(value).replace(/^.*\s(\w+)\]$/, "$1").toLowerCase()
-
 getElement = (element) -> angular.element element
+setAttrsToElement = (el, attrs = {}) -> el.attr attrs
+setAttrsByType = (el, config, type) -> setAttrsToElement el, config["#{type}Attrs"]
 
 elementTypes =
   string: "<input type=\"text\">"
   number: "<input type=\"number\">"
   choice: "<select name=\"{{element.name}}\" ng-options=\"v for v in element.choices\">"
   boolean: "<input type=\"checkbox\">"
-
-setAttrsToElement = (el, attrs = {}) -> el.attr attrs
-
-setElementAttrsByType = (el, type) ->
-  switch type
-    when "string"
-      el.attr type: "text"
-
-    when "number"
-      el.attr type: "number"
-
-    when "boolean"
-      el.attr type: "checkbox"
-
-    when "array"
-      el.attr
-        "ng-options": "v for v in model.array"
-        "multiple": true
 
 app.directive "formBuilder", ["FormConfig", (FormConfig) ->
   restrict: "E"
@@ -44,10 +27,10 @@ app.directive "formBuilder", ["FormConfig", (FormConfig) ->
   compile: (tElem, tAttrs) -> (scope, el, attrs) ->
     scope.submit ||= ->
     form = scope.form
-    scope.model = form.model
+    scope.model = form.model || {}
     scope.elements = form.fields
     scope.formName = form.name
-    setAttrsToElement(el.find("form"), FormConfig.get "formAttrs")
+    setAttrsByType el.find("form"), FormConfig.get(), "form"
 ]
 
 app.directive "formElement", ["$compile", "FormConfig", ($compile, FormConfig) ->
@@ -57,14 +40,21 @@ app.directive "formElement", ["$compile", "FormConfig", ($compile, FormConfig) -
     label = element.label
     name = element.name
     id = "form-#{scope.formName}-#{name}"
-    if label then el.append (getElement "<label for=\"#{id}\">").text label
+    config = FormConfig.get()
+
+    if label
+      labelElement = getElement "<label for=\"#{id}\">"
+      labelElement.html label
+      setAttrsByType labelElement, config, "label"
+      el.append labelElement
+
     scope.model[name] ||= element.init
     value = scope.model[name]
-    widget = getElement elementTypes[ element.type || getElementType(value) || "string" ]
+    widget = getElement elementTypes[ element.type || getElementType(value) ] or elementTypes.string
     widget.attr
       "ng-model": "model.#{name}"
       id: id
 
-    setAttrsToElement widget, FormConfig.get "widgetAttrs"
+    setAttrsByType widget, config, "widget"
     el.append $compile(widget) scope
 ]
