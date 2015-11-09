@@ -12,26 +12,33 @@ elementTypes =
   choice: "<select name=\"{{element.name}}\" ng-options=\"v for v in element.choices\">"
   boolean: "<input type=\"checkbox\">"
 
-app.directive "formBuilder", ["FormConfig", (FormConfig) ->
+app.directive "formBuilder", ["$compile", "FormConfig", ($compile, FormConfig) ->
   restrict: "E"
   scope:
     submit: "="
     form: "="
 
-  template: """
-    <form novalidate ng-submit="submit()" name="{{ formName }}">
-      <form-element ng-repeat="element in elements"></form-element>
-      <form-button ng-repeat="button in buttons"></form-button>
-    </form>
-  """
-
   compile: (tElem, tAttrs) -> (scope, el, attrs) ->
+    formTpl = """
+      <form novalidate ng-submit="submit()" name="{{ formName }}">
+        <form-element ng-repeat="element in elements"></form-element>
+        <form-button ng-repeat="button in buttons"></form-button>
+      </form>
+    """
+
     scope.submit ||= ->
     form = scope.form
     scope.model = form.model || {}
     scope.elements = form.fields
     scope.buttons = form.buttons
     scope.formName = form.name
+    formElement = getElement formTpl
+
+    if formDecorator = FormConfig.get "formDecorator"
+      formElement = getElement(formDecorator).append formElement
+
+    el.append $compile(formElement) scope
+
     setAttrsByType el.find("form"), FormConfig.get(), "form"
 ]
 
@@ -63,7 +70,7 @@ app.directive "formElement", ["$compile", "FormConfig", ($compile, FormConfig) -
 
 app.directive "formButton", ["$compile", ($compile) ->
   restrict: "E"
-  compile: (tElem, tAttr) -> (scope, el) ->
+  compile: (tElem, tAttr) -> (scope, el, attrs) ->
     button = scope.button
     buttonElement = getElement "<button>"
     setAttrsByType buttonElement, button.attrs

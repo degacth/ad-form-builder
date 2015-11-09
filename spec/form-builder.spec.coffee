@@ -9,11 +9,13 @@ describe "Элемент базовой формы", ->
     el
 
   beforeEach angular.mock.module "FormBuilder", ["FormConfigProvider", (FormConfigProvider) ->
-    FormConfigProvider.set "formAttrs",
-      class: "uk-form"
-      "data-hello": "world"
-    FormConfigProvider.set "labelAttrs",
-      class: "uk-label"
+    FormConfigProvider.set
+      formAttrs:
+        class: "uk-form"
+        "data-hello": "world"
+      labelAttrs:
+        class: "uk-label"
+      formDecorator: "<div>"
     return
   ]
 
@@ -93,3 +95,7 @@ describe "Элемент базовой формы", ->
       el = compiler()
       expect(el.find("form.uk-form[data-hello=world]").length).toBe(1)
       expect(el.find("label.uk-label").length).toBe(1)
+
+    it "Должна декорировать элементы", ->
+      el = compiler()
+      expect(el.find("div").length).toBe(1)

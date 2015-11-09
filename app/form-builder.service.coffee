@@ -18,6 +18,7 @@ app.provider "FormConfig", ->
     defaultButtonLabel: "submit"
 
   set: (k, v) ->
+    unless v then return _.extend config, k
     config[k] = v
   $get: ->
     get: (k) -> if k then config[k] else config
