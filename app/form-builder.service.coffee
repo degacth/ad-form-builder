@@ -3,6 +3,7 @@ app = require "./form-builder.app.coffee"
 
 app.factory "Form", ["FormConfig", (FormConfig) -> class
   constructor: (@name, @model) ->
+    @attrs = {}
     @fields = []
     @buttons = [
       label: FormConfig.getDefaultButtonLabel()
