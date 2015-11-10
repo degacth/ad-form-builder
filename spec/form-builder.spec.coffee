@@ -19,6 +19,9 @@ describe "Элемент базовой формы", ->
       formDecorator: "<div class=\"form-decor\">"
       elementsDecorator: "<div class=\"elements-decor\">"
       buttonsDecorator: "<div class=\"buttons-decor\">"
+      labelDecorator: "<div class=\"label-decor\">"
+      widgetDecorator: "<div class=\"widget-decor\">"
+      buttonDecorator: "<div class=\"button-decor\">"
     return
   ]
 
@@ -101,20 +104,33 @@ describe "Элемент базовой формы", ->
       expect(el.find("label.uk-label").length).toBe(1)
 
     it "Должна декорировать элементы на основе конфига", ->
+      form.addField "hello",
+        label: "hello"
       el = compiler()
       expect(el.find("div.form-decor").length).toBe(1)
       expect(el.find("div.elements-decor").length).toBe(1)
       expect(el.find("div.buttons-decor").length).toBe(1)
+      expect(el.find("div.label-decor").length).toBe(1)
+      expect(el.find("div.widget-decor").length).toBe(1)
+      expect(el.find("div.button-decor").length).toBe(1)
 
     it "Должна декорировать с переопеределением конфига", ->
+      form.addField "hello",
+        label: "hello"
       form.decorator = "<div class=\"new-form-decor\">"
       form.elementsDecorator = "<div class=\"new-elements-decor\">"
       form.buttonsDecorator = "<div class=\"new-buttons-decor\">"
+      form.labelDecorator = "<div class=\"new-label-decor\">"
+      form.widgetDecorator = "<div class=\"new-widget-decor\">"
+      form.buttonDecorator = "<div class=\"new-button-decor\">"
       el = compiler()
 
       expect(el.find("div.new-form-decor").length).toBe(1)
       expect(el.find("div.new-elements-decor").length).toBe(1)
       expect(el.find("div.new-buttons-decor").length).toBe(1)
+      expect(el.find("div.new-label-decor").length).toBe(1)
+      expect(el.find("div.new-widget-decor").length).toBe(1)
+      expect(el.find("div.new-button-decor").length).toBe(1)
 
     it "Элементы формы вперёд кнопок", ->
       el = compiler()

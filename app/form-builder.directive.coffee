@@ -58,7 +58,7 @@ app.directive "formElement", ["$compile", "FormConfig", ($compile, FormConfig) -
       labelElement = getElement "<label for=\"#{id}\">"
       labelElement.html label
       setAttrs labelElement, config.labelAttrs, element.labelAttrs
-      el.append labelElement
+      el.append decorateElement labelElement, config.labelDecorator, scope.form.labelDecorator
 
     scope.model[name] ||= element.init
     value = scope.model[name]
@@ -68,7 +68,7 @@ app.directive "formElement", ["$compile", "FormConfig", ($compile, FormConfig) -
       id: id
 
     setAttrs widget, config.widgetAttrs, element.attrs
-    el.append $compile(widget) scope
+    el.append $compile(decorateElement widget, config.widgetDecorator, scope.form.widgetDecorator) scope
 ]
 
 app.directive "formButton", ["$compile", "FormConfig", ($compile, FormConfig) ->
@@ -79,5 +79,5 @@ app.directive "formButton", ["$compile", "FormConfig", ($compile, FormConfig) ->
     buttonElement = getElement "<button>"
     setAttrs buttonElement, config.buttonAttrs, button.attrs
     buttonElement.html button.label
-    el.append $compile(buttonElement) scope
+    el.append $compile(decorateElement buttonElement, config.buttonDecorator, scope.form.buttonDecorator) scope
 ]
