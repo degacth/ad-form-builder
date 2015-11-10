@@ -5,6 +5,7 @@ getElementType = (value) -> Object::toString.call(value).replace(/^.*\s(\w+)\]$/
 getElement = (element) -> angular.element element
 setAttrs = (el, attrs...) -> el.attr _.extend {}, attrs...
 decorateElement = (el, decorators...) ->
+  el = getElement el if typeof el is "string"
   if decorator = _.last _.compact decorators then getElement(decorator).append el else el
 
 elementTypes =
@@ -20,12 +21,10 @@ app.directive "formBuilder", ["$compile", "FormConfig", ($compile, FormConfig) -
     form: "="
 
   compile: -> (scope, el, attrs) ->
-    formTpl = """
-      <form novalidate ng-submit="submit()" name="{{ formName }}">
-        <form-element ng-repeat="element in elements"></form-element>
-        <form-button ng-repeat="button in buttons"></form-button>
-      </form>
-    """
+    formTpl = "<form novalidate ng-submit=\"submit()\" name=\"{{ formName }}\">"
+    formElementTpl = "<form-element ng-repeat=\"element in elements\"></form-element>"
+    formButtonTpl = "<form-button ng-repeat=\"button in buttons\"></form-button>"
+    config = FormConfig.get()
 
     scope.submit ||= ->
     form = scope.form
@@ -33,9 +32,16 @@ app.directive "formBuilder", ["$compile", "FormConfig", ($compile, FormConfig) -
     scope.elements = form.fields
     scope.buttons = form.buttons
     scope.formName = form.name
-    formElement = decorateElement getElement(formTpl), FormConfig.get "formDecorator", form.decorator
-    el.append $compile(formElement) scope
-    setAttrs el.find("form"), FormConfig.get("formAttrs"), form.attrs
+    els = [
+      {el: formTpl, decs: [config.formDecorator, form.decorator]}
+      {el: formElementTpl, decs: [config.elementsDecorator, form.elementsDecorator]}
+      {el: formButtonTpl, decs: [config.buttonsDecorator, form.buttonsDecorator]}
+    ]
+
+    [formElement, elements, buttons] = _.map els, (e) -> decorateElement e.el, e.decs...
+    buttonBefore = (arr) -> if config.buttonsBefore then arr else arr.reverse()
+    el.append $compile(_.foldl buttonBefore([elements, buttons]), ( (acc, item) -> acc.append item ), formElement) scope
+    setAttrs el.find("form"), config.formAttrs, form.attrs
 ]
 
 app.directive "formElement", ["$compile", "FormConfig", ($compile, FormConfig) ->
