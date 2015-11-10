@@ -121,6 +121,6 @@ describe "Элемент базовой формы", ->
       expect(el.find(".elements-decor").next().hasClass("buttons-decor")).toBe(true)
 
     it "Элементы формы после кнопок", ->
-      config.buttonsBefore = false
+      config.buttonsAfter = false
       el = compiler()
       expect(el.find(".buttons-decor").next().hasClass("elements-decor")).toBe(true)

@@ -39,8 +39,9 @@ app.directive "formBuilder", ["$compile", "FormConfig", ($compile, FormConfig) -
     ]
 
     [formElement, elements, buttons] = _.map els, (e) -> decorateElement e.el, e.decs...
-    buttonBefore = (arr) -> if config.buttonsBefore then arr else arr.reverse()
-    el.append $compile(_.foldl buttonBefore([elements, buttons]), ( (acc, item) -> acc.append item ), formElement) scope
+    is_buttons_after = form.buttonsAfter and config.buttonsAfter
+    buttonAfter = (arr) -> if is_buttons_after then arr else arr.reverse()
+    el.append $compile(_.foldl buttonAfter([elements, buttons]), ( (acc, item) -> acc.append item ), formElement) scope
     setAttrs el.find("form"), config.formAttrs, form.attrs
 ]
 

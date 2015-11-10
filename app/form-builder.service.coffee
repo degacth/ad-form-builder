@@ -2,6 +2,8 @@ _ = require "lodash"
 app = require "./form-builder.app.coffee"
 
 app.factory "Form", ["FormConfig", (FormConfig) -> class
+  buttonsAfter: yes
+
   constructor: (@name, @model) ->
     @attrs = {}
     @fields = []
@@ -17,7 +19,7 @@ app.factory "Form", ["FormConfig", (FormConfig) -> class
 app.provider "FormConfig", ->
   config =
     defaultButtonLabel: "submit"
-    buttonsBefore: yes
+    buttonsAfter: yes
 
   set: (k, v) ->
     unless v then return _.extend config, k
